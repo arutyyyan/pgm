@@ -158,7 +158,9 @@ int pgm_init_process_local(void);
                graph sharing between processes.
     Return: 0 on success. -1 on error.
  */
-int pgm_init(const char* dir, int create = 0, int use_shared_mem = 0);
+int pgm_init1(const char* dir);
+int pgm_init2(const char* dir, int create);
+int pgm_init3(const char* dir, int create, int use_shared_mem);
 
 /*
    Destroy any PGM runtime data. Call before process termination.
@@ -207,7 +209,10 @@ int pgm_init_node(node_t* node, graph_t graph, const char* name);
      [in]  attr: Edge parameters
    Return: 0 on success. -1 on error.
  */
-int pgm_init_edge(edge_t* edge, node_t producer, node_t consumer,
+ int pgm_init_edge4(edge_t* edge, node_t producer, node_t consumer,
+ 	const char* name);
+
+int pgm_init_edge5(edge_t* edge, node_t producer, node_t consumer,
 	const char* name, const edge_attr_t* attr = &default_edge);
 
 /*
@@ -223,9 +228,13 @@ int pgm_init_edge(edge_t* edge, node_t producer, node_t consumer,
      [in]  attr: Edge parameters
    Return: 0 on success. -1 on error.
  */
-int pgm_init_backedge(edge_t* edge, size_t nr_skips,
+ int pgm_init_backedge5(edge_t* edge, size_t nr_skips,
+ 	node_t producer, node_t consumer,
+ 	const char* name);
+
+int pgm_init_backedge6(edge_t* edge, size_t nr_skips,
 	node_t producer, node_t consumer,
-	const char* name, const edge_attr_t* attr = &default_edge);
+	const char* name, const edge_attr_t* attr);
 
 /*
    Find a graph by its name. (Graph is found within the namespace
@@ -255,8 +264,11 @@ int pgm_find_node(node_t* node, graph_t graph, const char* name);
                   May be NULL.
    Return: 0 on success. -1 on error.
  */
-int pgm_find_edge(edge_t* edge, node_t producer, node_t consumer,
-	const char* name, edge_attr_t* attrs = NULL);
+ int pgm_find_edge4(edge_t* edge, node_t producer, node_t consumer,
+ 	const char* name);
+
+int pgm_find_edge5(edge_t* edge, node_t producer, node_t consumer,
+	const char* name, edge_attr_t* attrs);
 
 /*
    Find the first edge between a producer and consumer.
@@ -267,8 +279,10 @@ int pgm_find_edge(edge_t* edge, node_t producer, node_t consumer,
                   May be NULL.
    Return: 0 on success. -1 on error.
  */
-int pgm_find_first_edge(edge_t* edge, node_t producer, node_t consumer,
-	edge_attr_t* attrs = NULL);
+int pgm_find_first_edge3(edge_t* edge, node_t producer, node_t consumer);
+
+int pgm_find_first_edge4(edge_t* edge, node_t producer, node_t consumer,
+	edge_attr_t* attrs);
 
 /*
    Attach user data to a given node.
@@ -293,7 +307,10 @@ void* pgm_get_user_data(node_t node);
                    Must be >= number of successors of node.
    Return: 0 on success. -1 on error.
  */
-int pgm_get_successors(node_t n, node_t* successors, int len, int ignore_backedges = 1);
+
+int pgm_get_successors2(node_t n, node_t* successors, int len);
+
+int pgm_get_successors3(node_t n, node_t* successors, int len, int ignore_backedges;
 
 /*
    Get edge descriptors of all outbound edges of a node.
@@ -303,7 +320,9 @@ int pgm_get_successors(node_t n, node_t* successors, int len, int ignore_backedg
                    Must be >= number of outbound-edges of node.
    Return: 0 on success. -1 on error.
  */
-int pgm_get_edges_out(node_t n, edge_t* edges, int len, int ignore_backedges = 1);
+
+int pgm_get_edges_out2(node_t n, edge_t* edges, int len);
+int pgm_get_edges_out3(node_t n, edge_t* edges, int len, int ignore_backedges);
 
 /*
    Get node descriptors to all predecessors of a node.
@@ -313,7 +332,9 @@ int pgm_get_edges_out(node_t n, edge_t* edges, int len, int ignore_backedges = 1
                    Must be >= number of predecessors of node.
    Return: 0 on success. -1 on error.
  */
-int pgm_get_predecessors(node_t, node_t* predecessors, int len, int ignore_backedges = 1);
+
+int pgm_get_predecessors2(node_t node, node_t* predecessors, int len);
+int pgm_get_predecessors3(node_t node, node_t* predecessors, int len, int ignore_backedges);
 
 /*
    Get edge descriptors of all inbound edges of a node.
@@ -323,28 +344,35 @@ int pgm_get_predecessors(node_t, node_t* predecessors, int len, int ignore_backe
                    Must be >= number of outbound-edges of node.
    Return: 0 on success. -1 on error.
  */
-int pgm_get_edges_in(node_t n, edge_t* edges, int len, int ignore_backedges = 1);
+int pgm_get_edges_in3(node_t n, edge_t* edges, int len);
+
+int pgm_get_edges_in4(node_t n, edge_t* edges, int len, int ignore_backedges);
 
 /*
    Get the total number of edges connected to a node.
      [in] node: Node descriptor
    Return: Degree of node. -1 on error.
  */
-int pgm_get_degree(node_t node, int ignore_backedges = 1);
 
+int pgm_get_degree1(node_t node);
+int pgm_get_degree2(node_t node, int ignore_backedges);
 /*
    Get the number of inbound edges of a node.
      [in] node: Node descriptor
    Return: Inbound degree of edge. -1 on error.
  */
-int pgm_get_degree_in(node_t node, int ignore_backedges = 1);
+int pgm_get_degree_in1(node_t node);
+
+int pgm_get_degree_in2(node_t node, int ignore_backedges);
 
 /*
    Get the number of outbound edges of a node.
      [in] node: Node descriptor
    Return: Outbound degree of node. -1 on error.
  */
-int pgm_get_degree_out(node_t node, int ignore_backedges = 1);
+int pgm_get_degree_out1(node_t node);
+
+int pgm_get_degree_out2(node_t node, int ignore_backedges);
 
 /*
    Get the name of a node.
@@ -493,7 +521,9 @@ int pgm_is_descendant(node_t node, node_t query);
           with pgm_init_backedge().
    Return: 1 if graph is acyclic, 0 if it is not.
  */
-int pgm_is_dag(graph_t graph, int ignore_explicit_backedges = 1);
+
+int pgm_is_dag1(graph_t graph);
+int pgm_is_dag2(graph_t graph, int ignore_explicit_backedges);
 
 /* Signature of a function that weights a given edge */
 typedef double (*pgm_weight_func_t)(edge_t e, void* user);
@@ -508,7 +538,11 @@ typedef double (*pgm_weight_func_t)(edge_t e, void* user);
      [in] user: User data passed to 'w' as input. May be NULL.
    Return: Length of shortest path.
  */
-double pgm_get_min_depth(node_t node, pgm_weight_func_t w = NULL, void* user = NULL);
+double pgm_get_min_depth1(node_t node);
+
+double pgm_get_min_depth2(node_t node, pgm_weight_func_t w);
+
+double pgm_get_min_depth3(node_t node, pgm_weight_func_t w, void* user);
 
 /*
    Get the length of the longest path from any graph source to a node,
@@ -520,15 +554,22 @@ double pgm_get_min_depth(node_t node, pgm_weight_func_t w = NULL, void* user = N
      [in] user: User data passed to 'w' as input. May be NULL.
    Return: Length of the longest path.
  */
-double pgm_get_max_depth(node_t node, pgm_weight_func_t w = NULL, void* user = NULL);
 
+double pgm_get_max_depth1(node_t node);
+
+double pgm_get_max_depth2(node_t node, pgm_weight_func_t w);
+
+double pgm_get_max_depth3(node_t node, pgm_weight_func_t w, void* user);
 /*
    Establish exclusive ownership of a node by a thread of execution.
      [in] node: Node descriptor
      [in]  tid: Thread descriptor. (optional)
    Return: 0 on success. -1 on error.
  */
-int pgm_claim_node(node_t node, pid_t tid = 0);
+
+int pgm_claim_node1(node_t node);
+
+int pgm_claim_node2(node_t node, pid_t tid);
 
 /*
    Establish exclusive ownership of any free node by a thread of execution.
@@ -537,7 +578,8 @@ int pgm_claim_node(node_t node, pid_t tid = 0);
      [in]    tid: Thread descriptor (optional)
    Return: 0 on success. -1 on error.
  */
-int pgm_claim_any_node(graph_t graph, node_t* node, pid_t tid = 0);
+int pgm_claim_any_node2(graph_t graph, node_t* node);
+int pgm_claim_any_node3(graph_t graph, node_t* node, pid_t tid);
 
 /*
    Free a node previously claimed by a thread of execution.
@@ -546,7 +588,9 @@ int pgm_claim_any_node(graph_t graph, node_t* node, pid_t tid = 0);
                 used to establish the ownership.
    Return: 0 on success. -1 on error.
  */
-int pgm_release_node(node_t node, pid_t tid = 0);
+
+int pgm_release_node1(node_t node);
+int pgm_release_node2(node_t node, pid_t tid);
 
 /*
    Wait for, and consume, inbound tokens. Caller will block until
@@ -665,23 +709,33 @@ int pgm_swap_edge_bufs(void* a, void* b);
  string-based names.
  */
 
-int pgm_init_graph(graph_t* graph, unsigned int numerical_name);
+int pgm_init_graph_int(graph_t* graph, unsigned int numerical_name);
 
-int pgm_find_graph(graph_t* graph, unsigned int numerical_name);
+int pgm_find_graph_int(graph_t* graph, unsigned int numerical_name);
 
-int pgm_init_node(node_t* node, graph_t graph, unsigned int numerical_name);
+int pgm_init_node_int(node_t* node, graph_t graph, unsigned int numerical_name);
 
-int pgm_find_node(node_t* node, graph_t graph, unsigned int numerical_name);
+int pgm_find_node_int(node_t* node, graph_t graph, unsigned int numerical_name);
 
-int pgm_init_edge(edge_t* edge, node_t producer, node_t consumer,
+int pgm_init_edge_int4(edge_t* edge, node_t producer, node_t consumer,
+	unsigned int numerical_name);
+
+int pgm_init_edge_int5(edge_t* edge, node_t producer, node_t consumer,
 	unsigned int numerical_name,
-	const edge_attr_t* attrs = &default_edge);
+	const edge_attr_t* attrs);
 
-int pgm_init_backedge(edge_t* edge, size_t nskips,
+int pgm_init_backedge_int5(edge_t* edge, size_t nskips,
+		node_t producer, node_t consumer,
+		unsigned int numerical_name);
+
+int pgm_init_backedge_int6(edge_t* edge, size_t nskips,
 	node_t producer, node_t consumer,
 	unsigned int numerical_name,
-	const edge_attr_t* attrs = &default_edge);
+	const edge_attr_t* attrs);
 
-int pgm_find_edge(edge_t* edge, node_t producer, node_t consumer,
+int pgm_find_edge_int4(edge_t* edge, node_t producer, node_t consumer,
+		unsigned int numerical_name);
+
+int pgm_find_edge_int5(edge_t* edge, node_t producer, node_t consumer,
 	unsigned int numerical_name,
-	edge_attr_t* attrs = NULL);
+	edge_attr_t* attrs);

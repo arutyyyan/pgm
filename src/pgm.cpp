@@ -1656,7 +1656,13 @@ int pgm_init_process_local(void)
 	return ret;
 }
 
-int pgm_init(const char* dir, int create, int use_shared_mem)
+int pgm_init1(const char* dir){
+	return pgm_init3(dir, 0, 0);
+}
+int pgm_init2(const char* dir, int create){
+	return pgm_init3(dir, create, 0);
+}
+int pgm_init3(const char* dir, int create, int use_shared_mem)
 {
 	int ret = -1;
 	path graphDir(dir);
@@ -1884,7 +1890,7 @@ out:
 	return ret;
 }
 
-int pgm_init_graph(graph_t* graph, unsigned int numerical_name)
+int pgm_init_graph_int(graph_t* graph, unsigned int numerical_name)
 {
 	char name[PGM_GRAPH_NAME_LEN];
 	snprintf(name, PGM_GRAPH_NAME_LEN, "%x", numerical_name);
@@ -1935,7 +1941,7 @@ out:
 	return ret;
 }
 
-int pgm_init_node(node_t* node, graph_t graph, unsigned int numerical_name)
+int pgm_init_node_int(node_t* node, graph_t graph, unsigned int numerical_name)
 {
 	char name[PGM_NODE_NAME_LEN];
 	snprintf(name, PGM_NODE_NAME_LEN, "%x", numerical_name);
@@ -2071,7 +2077,11 @@ out:
 	return ret;
 }
 
-int pgm_init_edge(edge_t* edge,
+int pgm_init_edge4(edge_t* edge, node_t producer, node_t consumer,
+	const char* name){
+		return pgm_init_edge5(edge, producer, consumer, name, &default_edge);
+	}
+int pgm_init_edge5(edge_t* edge,
 	node_t producer, node_t consumer, const char* name,
 	const edge_attr_t* attr)
 {
@@ -2079,7 +2089,7 @@ int pgm_init_edge(edge_t* edge,
 	return ret;
 }
 
-int pgm_init_edge(edge_t* edge, node_t producer, node_t consumer,
+int pgm_init_edge_int5(edge_t* edge, node_t producer, node_t consumer,
 	unsigned int numerical_name,
 	const edge_attr_t* attrs)
 {
@@ -2088,7 +2098,18 @@ int pgm_init_edge(edge_t* edge, node_t producer, node_t consumer,
 	return pgm_init_edge(edge, producer, consumer, name, attrs);
 }
 
-int pgm_init_backedge(edge_t* edge, size_t nr_skips,
+int pgm_init_edge_int4(edge_t* edge, node_t producer, node_t consumer,
+	unsigned int numerical_name){
+		return pgm_init_edge_int5(edge, producer, consumer, numerical_name, &default_edge);
+	}
+
+int pgm_init_backedge5(edge_t* edge, size_t nr_skips,
+  	node_t producer, node_t consumer,
+  	const char* name){
+			return pgm_init_backedge5(edge, nr_skips, producer, consumer, name, &default_edge);
+		}
+
+int pgm_init_backedge6(edge_t* edge, size_t nr_skips,
 	node_t producer, node_t consumer, const char* name,
 	const edge_attr_t* attr)
 {
@@ -2096,7 +2117,13 @@ int pgm_init_backedge(edge_t* edge, size_t nr_skips,
 	return ret;
 }
 
-int pgm_init_backedge(edge_t* edge, size_t nr_skips,
+int pgm_init_backedge_int5(edge_t* edge, size_t nskips,
+		node_t producer, node_t consumer,
+		unsigned int numerical_name){
+			return pgm_init_backedge_int6(edge, nskips, producer, consumer, numerical_name, &default_edge);
+		}
+
+int pgm_init_backedge_int6(edge_t* edge, size_t nr_skips,
 	node_t producer, node_t consumer,
 	unsigned int numerical_name,
 	const edge_attr_t* attrs)
@@ -2128,7 +2155,7 @@ out:
 	return ret;
 }
 
-int pgm_find_graph(graph_t* graph, unsigned int numerical_name)
+int pgm_find_graph_int(graph_t* graph, unsigned int numerical_name)
 {
 	char name[PGM_GRAPH_NAME_LEN];
 	snprintf(name, PGM_GRAPH_NAME_LEN, "%x", numerical_name);
@@ -2166,14 +2193,19 @@ out:
 	return ret;
 }
 
-int pgm_find_node(node_t* node, graph_t graph, unsigned int numerical_name)
+int pgm_find_node_int(node_t* node, graph_t graph, unsigned int numerical_name)
 {
 	char name[PGM_NODE_NAME_LEN];
 	snprintf(name, PGM_NODE_NAME_LEN, "%x", numerical_name);
 	return pgm_find_node(node, graph, name);
 }
 
-int pgm_find_edge(edge_t* edge, node_t producer, node_t consumer,
+int pgm_find_edge4(edge_t* edge, node_t producer, node_t consumer,
+ const char* name){
+	 return pgm_find_edge5(edge, producer, consumer, name, NULL);
+ }
+
+int pgm_find_edge5(edge_t* edge, node_t producer, node_t consumer,
 				const char* name, edge_attr_t* attr)
 {
 	int ret = -1;
@@ -2238,8 +2270,12 @@ out_unlock:
 out:
 	return ret;
 }
+int pgm_find_edge_int4(edge_t* edge, node_t producer, node_t consumer,
+		unsigned int numerical_name){
+			return pgm_find_edge_int5(edge, producer, consumer, numerical_name, NULL);
+		}
 
-int pgm_find_edge(edge_t* edge, node_t producer, node_t consumer,
+int pgm_find_edge_int5(edge_t* edge, node_t producer, node_t consumer,
 	unsigned int numerical_name,
 	edge_attr_t* attrs)
 {
@@ -2248,7 +2284,12 @@ int pgm_find_edge(edge_t* edge, node_t producer, node_t consumer,
 	return pgm_find_edge(edge, producer, consumer, name, attrs);
 }
 
-int pgm_find_first_edge(edge_t* edge, node_t producer, node_t consumer, edge_attr_t *attr)
+int pgm_find_first_edge3(edge_t* edge, node_t producer, node_t consumer){
+	return pgm_find_first_edge4(edge, producer, consumer, NULL)
+}
+
+
+int pgm_find_first_edge4(edge_t* edge, node_t producer, node_t consumer, edge_attr_t *attr)
 {
 	int ret = -1;
 	struct pgm_graph* g;
@@ -2316,8 +2357,11 @@ void* pgm_get_user_data(node_t node)
 out:
 	return udata;
 }
+int pgm_get_successors2(node_t n, node_t* successors, int len){
+	return pgm_get_successors3(n, successors, len, 1);
+}
 
-int pgm_get_successors(node_t node, node_t* successors, int len, int ignore_backedges)
+int pgm_get_successors3(node_t node, node_t* successors, int len, int ignore_backedges)
 {
 	int num = -1;
 	struct pgm_graph* g;
@@ -2360,7 +2404,11 @@ out:
 	return num;
 }
 
-int pgm_get_edges_out(node_t node, edge_t* edges, int len, int ignore_backedges)
+int pgm_get_edges_out2(node_t n, edge_t* edges, int len){
+	return pgm_get_edges_out3(n, edges, len, 1);
+}
+
+int pgm_get_edges_out3(node_t node, edge_t* edges, int len, int ignore_backedges)
 {
 	int num = -1;
 	struct pgm_graph* g;
@@ -2402,7 +2450,11 @@ out:
 	return num;
 }
 
-int pgm_get_predecessors(node_t node, node_t* predecessors, int len, int ignore_backedges)
+int pgm_get_predecessors2(node_t node, node_t* predecessors, int len){
+	return pgm_get_predecessors3(node, predecessors, len, 1);
+}
+
+int pgm_get_predecessors3(node_t node, node_t* predecessors, int len, int ignore_backedges)
 {
 	int num = -1;
 	struct pgm_graph* g;
@@ -2445,7 +2497,11 @@ out:
 	return num;
 }
 
-int pgm_get_edges_in(node_t node, edge_t* edges, int len, int ignore_backedges)
+int pgm_get_edges_in3(node_t n, edge_t* edges, int len){
+	return pgm_get_edges_in4(n, edges, len, 1)
+}
+
+int pgm_get_edges_in4(node_t node, edge_t* edges, int len, int ignore_backedges)
 {
 	int num = -1;
 	struct pgm_graph* g;
@@ -2626,7 +2682,11 @@ out:
 	return threshold;
 }
 
-int pgm_get_degree(node_t node, int ignore_backedges)
+int pgm_get_degree1(node_t node){
+	return pgm_get_degree2(node, 1);
+}
+
+int pgm_get_degree2(node_t node, int ignore_backedges)
 {
 	int ret = -1;
 	struct pgm_graph* g;
@@ -2663,7 +2723,11 @@ out:
 	return ret;
 }
 
-int pgm_get_degree_in(node_t node, int ignore_backedges)
+int pgm_get_degree_in1(node_t node){
+	return pgm_get_degree_in2(node, 1);
+}
+
+int pgm_get_degree_in2(node_t node, int ignore_backedges)
 {
 	int ret = -1;
 	struct pgm_graph* g;
@@ -2695,7 +2759,11 @@ out:
 	return ret;
 }
 
-int pgm_get_degree_out(node_t node, int ignore_backedges)
+int pgm_get_degree_out(node_t node{
+	return pgm_get_degree_out2(node, 1);
+};
+
+int pgm_get_degree_out2(node_t node, int ignore_backedges)
 {
 	int ret = -1;
 	struct pgm_graph* g;
@@ -2887,8 +2955,11 @@ static int dag_visit(
 
 	return 1;
 }
+int pgm_is_dag1(graph_t graph){
+	return pgm_is_dag2(graph, 1);
+}
 
-int pgm_is_dag(graph_t graph, int ignore_explicit_backedges)
+int pgm_is_dag2(graph_t graph, int ignore_explicit_backedges)
 {
 	int isDag = 1; // assume true
 	if(!is_valid_graph(graph))
@@ -2939,7 +3010,16 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
 typedef boost::graph_traits<bgraph_t>::vertex_descriptor bnode_t;
 typedef std::pair<int, int> bedge_t;
 
-double pgm_get_max_depth(node_t target, pgm_weight_func_t wfunc, void* user)
+double pgm_get_max_depth1(node_t node){
+	return pgm_get_max_depth3(node, NULL, NULL);
+}
+
+double pgm_get_max_depth2(node_t node, pgm_weight_func_t w){
+	return pgm_get_max_depth3(node, w, NULL);
+}
+
+
+double pgm_get_max_depth3(node_t target, pgm_weight_func_t wfunc, void* user)
 {
 	// We can use BGL to compute the longest path by negating
 	// edge weights. This is safe since the input gGraphs are
@@ -2950,7 +3030,7 @@ double pgm_get_max_depth(node_t target, pgm_weight_func_t wfunc, void* user)
 
 	if(!is_valid_graph(target.graph))
 		goto out;
-	if(!pgm_is_dag(target.graph, true))
+	if(!pgm_is_dag2(target.graph, true))
 		goto out;
 	if(target.node < 0)
 		goto out;
@@ -3038,14 +3118,22 @@ out:
 	return dist;
 }
 
-double pgm_get_min_depth(node_t target, pgm_weight_func_t wfunc, void* user)
+double pgm_get_min_depth1(node_t node){
+	return pgm_get_min_depth3(node, NULL, NULL);
+}
+
+double pgm_get_min_depth2(node_t node, pgm_weight_func_t w){
+	return pgm_get_min_depth3(node, w, NULL);
+}
+
+double pgm_get_min_depth3(node_t target, pgm_weight_func_t wfunc, void* user)
 {
 	double dist = -1;
 	struct pgm_graph* g;
 
 	if(!is_valid_graph(target.graph))
 		goto out;
-	if(!pgm_is_dag(target.graph, true))
+	if(!pgm_is_dag2(target.graph, true))
 		goto out;
 	if(target.node < 0)
 		goto out;
@@ -3161,7 +3249,11 @@ static int __pgm_claim_node(struct pgm_graph* g, struct pgm_node* n)
 	return ret;
 }
 
-int pgm_claim_node(node_t node, pid_t tid)
+int pgm_claim_node1(node_t node){
+	return pgm_claim_node2(node, 0);
+}
+
+int pgm_claim_node2(node_t node, pid_t tid)
 {
 	int ret = -1;
 	struct pgm_graph* g;
@@ -3196,7 +3288,11 @@ out:
 	return ret;
 }
 
-int pgm_claim_any_node(graph_t graph, node_t* node, pid_t tid)
+int pgm_claim_any_node2(graph_t graph, node_t* node){
+	return pgm_claim_any_node3(graph, node, 0);
+}
+
+int pgm_claim_any_node3(graph_t graph, node_t* node, pid_t tid)
 {
 	int ret = -1;
 	int node_id;
@@ -3239,7 +3335,11 @@ out:
 	return ret;
 }
 
-int pgm_release_node(node_t node, pid_t tid)
+int pgm_release_node1(node_t node){
+	return pgm_release_node2(node, 0);
+}
+
+int pgm_release_node2(node_t node, pid_t tid)
 {
 	int ret = -1;
 	int was_error = 0;
