@@ -263,6 +263,14 @@ struct pgm_graph
 	struct pgm_edge edges[PGM_MAX_EDGES];
 };
 
+/* default to simple signal-based, non-data-passing IPC */
+static const edge_attr_t default_edge = {
+	.nr_produce   = 1,
+	.nr_consume   = 1,
+	.nr_threshold = 1,
+	.type         = pgm_cv_edge,
+};
+
 static inline int is_valid_handle(graph_t graph)
 {
 	return(graph >= 0 && graph <= PGM_MAX_GRAPHS);
@@ -1634,7 +1642,7 @@ static int prepare_graph_private_mem(void)
 
 	if (gGraphs == 0)
 	{
-		gGraphs = new (nothrow) struct pgm_graph[PGM_MAX_GRAPHS];
+		gGraphs = new (std::nothrow) struct pgm_graph[PGM_MAX_GRAPHS];
 		if (gGraphs)
 		{
 			memset(gGraphs, 0, sizeof(struct pgm_graph)*PGM_MAX_GRAPHS);
@@ -2095,7 +2103,7 @@ int pgm_init_edge_int5(edge_t* edge, node_t producer, node_t consumer,
 {
 	char name[PGM_EDGE_NAME_LEN];
 	snprintf(name, PGM_EDGE_NAME_LEN, "%x", numerical_name);
-	return pgm_init_edge(edge, producer, consumer, name, attrs);
+	return pgm_init_edge5(edge, producer, consumer, name, attrs);
 }
 
 int pgm_init_edge_int4(edge_t* edge, node_t producer, node_t consumer,
@@ -2106,7 +2114,7 @@ int pgm_init_edge_int4(edge_t* edge, node_t producer, node_t consumer,
 int pgm_init_backedge5(edge_t* edge, size_t nr_skips,
   	node_t producer, node_t consumer,
   	const char* name){
-			return pgm_init_backedge5(edge, nr_skips, producer, consumer, name, &default_edge);
+			return pgm_init_backedge6(edge, nr_skips, producer, consumer, name, &default_edge);
 		}
 
 int pgm_init_backedge6(edge_t* edge, size_t nr_skips,
@@ -2130,7 +2138,7 @@ int pgm_init_backedge_int6(edge_t* edge, size_t nr_skips,
 {
 	char name[PGM_EDGE_NAME_LEN];
 	snprintf(name, PGM_EDGE_NAME_LEN, "%x", numerical_name);
-	return pgm_init_backedge(edge, nr_skips, producer, consumer, name, attrs);
+	return pgm_init_backedge_int6(edge, nr_skips, producer, consumer, name, attrs);
 }
 
 ///////////////////////////////////////////////////
@@ -2213,7 +2221,7 @@ int pgm_find_edge5(edge_t* edge, node_t producer, node_t consumer,
 	size_t len;
 
 	if(!name)
-		return pgm_find_first_edge(edge, producer, consumer);
+		return pgm_find_first_edge3(edge, producer, consumer);
 
 	if(	!edge ||
 		(producer.graph != consumer.graph) ||
@@ -2281,11 +2289,11 @@ int pgm_find_edge_int5(edge_t* edge, node_t producer, node_t consumer,
 {
 	char name[PGM_EDGE_NAME_LEN];
 	snprintf(name, PGM_EDGE_NAME_LEN, "%x", numerical_name);
-	return pgm_find_edge(edge, producer, consumer, name, attrs);
+	return pgm_find_edge5(edge, producer, consumer, name, attrs);
 }
 
 int pgm_find_first_edge3(edge_t* edge, node_t producer, node_t consumer){
-	return pgm_find_first_edge4(edge, producer, consumer, NULL)
+	return pgm_find_first_edge4(edge, producer, consumer, NULL);
 }
 
 
@@ -2498,7 +2506,7 @@ out:
 }
 
 int pgm_get_edges_in3(node_t n, edge_t* edges, int len){
-	return pgm_get_edges_in4(n, edges, len, 1)
+	return pgm_get_edges_in4(n, edges, len, 1);
 }
 
 int pgm_get_edges_in4(node_t node, edge_t* edges, int len, int ignore_backedges)
@@ -2759,7 +2767,7 @@ out:
 	return ret;
 }
 
-int pgm_get_degree_out(node_t node{
+int pgm_get_degree_out(node_t node){
 	return pgm_get_degree_out2(node, 1);
 };
 

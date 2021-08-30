@@ -123,13 +123,7 @@ typedef struct pgm_edge_attr
 	};
 } edge_attr_t;
 
-/* default to simple signal-based, non-data-passing IPC */
-static const edge_attr_t default_edge = {
-	.nr_produce   = 1,
-	.nr_consume   = 1,
-	.nr_threshold = 1,
-	.type         = pgm_cv_edge,
-};
+
 
 /*
    Initialize the PGM runtime in the application for cases where
@@ -213,7 +207,7 @@ int pgm_init_node(node_t* node, graph_t graph, const char* name);
  	const char* name);
 
 int pgm_init_edge5(edge_t* edge, node_t producer, node_t consumer,
-	const char* name, const edge_attr_t* attr = &default_edge);
+	const char* name, const edge_attr_t* attr);
 
 /*
    Add an back-edge between two nodes in the same graph. It is assumed
@@ -310,7 +304,7 @@ void* pgm_get_user_data(node_t node);
 
 int pgm_get_successors2(node_t n, node_t* successors, int len);
 
-int pgm_get_successors3(node_t n, node_t* successors, int len, int ignore_backedges;
+int pgm_get_successors3(node_t n, node_t* successors, int len, int ignore_backedges);
 
 /*
    Get edge descriptors of all outbound edges of a node.
