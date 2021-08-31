@@ -2138,7 +2138,7 @@ int pgm_init_backedge_int6(edge_t* edge, size_t nr_skips,
 {
 	char name[PGM_EDGE_NAME_LEN];
 	snprintf(name, PGM_EDGE_NAME_LEN, "%x", numerical_name);
-	return pgm_init_backedge_int6(edge, nr_skips, producer, consumer, name, attrs);
+	return pgm_init_backedge6(edge, nr_skips, producer, consumer, name, attrs);
 }
 
 ///////////////////////////////////////////////////
