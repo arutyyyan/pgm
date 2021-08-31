@@ -1,3 +1,13 @@
+/*
+ * pgm.h
+ *
+ *  Created on: Aug 31, 2021
+ *      Author: arutyan
+ */
+
+#ifndef PGM_H_
+#define PGM_H_
+
 // Copyright (c) 2014, Glenn Elliott
 // All rights reserved.
 
@@ -122,6 +132,12 @@ typedef struct pgm_edge_attr
 		};
 	};
 } edge_attr_t;
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 
 
@@ -733,3 +749,11 @@ int pgm_find_edge_int4(edge_t* edge, node_t producer, node_t consumer,
 int pgm_find_edge_int5(edge_t* edge, node_t producer, node_t consumer,
 	unsigned int numerical_name,
 	edge_attr_t* attrs);
+#ifdef __cplusplus
+}
+#endif
+
+
+
+
+#endif /* PGM_H_ */
