@@ -2087,6 +2087,7 @@ out:
 
 int pgm_init_edge4(edge_t* edge, node_t producer, node_t consumer,
 	const char* name){
+		printf("init\n");
 		return pgm_init_edge5(edge, producer, consumer, name, &default_edge);
 	}
 int pgm_init_edge5(edge_t* edge,
@@ -2767,7 +2768,7 @@ out:
 	return ret;
 }
 
-int pgm_get_degree_out(node_t node){
+int pgm_get_degree_out1(node_t node){
 	return pgm_get_degree_out2(node, 1);
 };
 
