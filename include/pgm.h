@@ -1,13 +1,3 @@
-/*
- * pgm.h
- *
- *  Created on: Aug 31, 2021
- *      Author: arutyan
- */
-
-#ifndef PGM_H_
-#define PGM_H_
-
 // Copyright (c) 2014, Glenn Elliott
 // All rights reserved.
 
@@ -752,8 +742,3 @@ int pgm_find_edge_int5(edge_t* edge, node_t producer, node_t consumer,
 #ifdef __cplusplus
 }
 #endif
-
-
-
-
-#endif /* PGM_H_ */
